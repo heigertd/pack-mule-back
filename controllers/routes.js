@@ -52,8 +52,21 @@ router.get('/fakehikers', (req,res)=>{
 // }).then(res => {return res})
 
 router.get('/api/hikers', (req,res)=>{
-    db.Hikers.findAll().then(hikers => res.json(hikers))
+    db.Hikers.findAll({
+        where:{
+            hiker_type:'Mule'
+        }
+    }).then(hikers => res.json(hikers))
 })
+
+// router.get('/api/search', (req,res)=>{
+//     console.log(req.body)
+//     db.Hikers.find({
+//         where:{
+//             name: 'James'
+//         }
+//     }).then(hikers => res.json(hikers))
+// })
 
 router.post('/api/hikers', (req,res) =>{
     db.Hikers.create(req.body).then(hiker => {
