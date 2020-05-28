@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models")
 const sequelize = require("sequelize");
+const bcrypt = require('bcrypt');
+const session = require('express-session')
 
 router.get('/', (req, res)=>{
     res.send('controllers working')
@@ -52,11 +54,15 @@ router.get('/fakehikers', (req,res)=>{
 // }).then(res => {return res})
 
 router.get('/api/hikers', (req,res)=>{
-    db.Hikers.findAll({
-        where:{
-            hiker_type:'Mule'
-        }
-    }).then(hikers => res.json(hikers))
+    if(req.session.user){
+        db.Hikers.findAll({
+            where:{
+                hiker_type:'Mule'
+            }
+        }).then(hikers => res.json(hikers))
+    }else{
+        res.send('log in')
+    }
 })
 
 // router.get('/api/search', (req,res)=>{
@@ -72,6 +78,33 @@ router.post('/api/hikers', (req,res) =>{
     db.Hikers.create(req.body).then(hiker => {
         res.json(hiker)
     })
+});
+
+router.post('/login', (req,res)=>{
+    db.Hikers.findOne({
+        where:{
+            username: req.body.username
+        }
+    }).then(dbHiker =>{
+        if(!dbHiker){
+            req.session.user = false;
+            res.send(false)
+        }else if(bcrypt.compareSync(req.body.password, dbHiker.password)){
+            req.session.user = {
+                id: dbHiker.id,
+                username: dbHiker.username
+            }
+            res.json(req.session)
+            // res.send('logged in')
+        }else{
+            req.session.user = false;
+            res.send(false)
+        }
+    })
+})
+
+router.get('/readsessions', (req,res)=>{
+    res.json(req.session)
 })
 
 module.exports = router;

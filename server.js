@@ -1,5 +1,6 @@
 var express = require('express');
-var cors = require('cors')
+var cors = require('cors');
+const session = require('express-session')
 // Sets up the Express App
 // =============================================================
 var app = express();
@@ -13,7 +14,11 @@ var db = require('./models');
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); 
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    credentials:true
+})); 
+app.use(session({secret: 'something secret here', resave: true, saveUninitialized: true, cookie:{maxAge: 7200000}}))
 
 
 // Static directory
