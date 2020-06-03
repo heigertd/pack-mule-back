@@ -65,6 +65,14 @@ router.get('/api/hikers', (req,res)=>{
     }
 })
 
+router.get('/specifichiker/:id', (req,res) =>{
+    db.Hikers.findOne({
+        where:{
+            id: req.params.id
+        }
+    }).then(hiker => res.json(hiker))
+})
+
 // router.get('/api/search', (req,res)=>{
 //     console.log(req.body)
 //     db.Hikers.find({
@@ -80,6 +88,17 @@ router.post('/api/hikers', (req,res) =>{
     })
 });
 
+router.delete('/deletehiker/:id', (req,res) =>{
+    // console.log(req)
+    db.Hikers.destroy({
+        where:{
+            id: req.params.id
+        }
+    }).then(user =>{
+        res.send('deleted')
+    })
+})
+
 router.post('/login', (req,res)=>{
     db.Hikers.findOne({
         where:{
@@ -92,7 +111,14 @@ router.post('/login', (req,res)=>{
         }else if(bcrypt.compareSync(req.body.password, dbHiker.password)){
             req.session.user = {
                 id: dbHiker.id,
-                username: dbHiker.username
+                name: dbHiker.name,
+                hiker_type: dbHiker.hiker_type,
+                fav_hikes: dbHiker.fav_hikes,
+                experience: dbHiker.experience,
+                fun_fact: dbHiker.fun_fact,
+                email: dbHiker.email,
+                username: dbHiker.username,
+                password: dbHiker.password
             }
             res.json(req.session)
             // res.send('logged in')
