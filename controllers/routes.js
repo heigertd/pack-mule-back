@@ -107,7 +107,7 @@ router.post('/login', (req,res)=>{
     }).then(dbHiker =>{
         if(!dbHiker){
             req.session.user = false;
-            res.send(false)
+            res.send('username')
         }else if(bcrypt.compareSync(req.body.password, dbHiker.password)){
             req.session.user = {
                 id: dbHiker.id,
@@ -124,8 +124,26 @@ router.post('/login', (req,res)=>{
             // res.send('logged in')
         }else{
             req.session.user = false;
-            res.send(false)
+            res.send('password')
         }
+    })
+})
+
+router.get('/signout', (req,res) =>{
+    if(req.session){
+        req.session.user = false
+    }
+    res.json(req.session)
+})
+
+router.put('/updatehiker/:id', (req,res)=>{
+    console.log(req.body)
+    db.Hikers.update(req.body, {
+        where: {
+            id: req.params.id
+        }
+    }).then(result =>{
+        res.json(result)
     })
 })
 
