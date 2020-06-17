@@ -14,8 +14,12 @@ var db = require('./models');
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// app.use(cors({
+//     origin: ['http://localhost:3000'],
+//     credentials:true
+// })); 
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: ['https://pack-mule.herokuapp.com'],
     credentials:true
 })); 
 app.use(session({secret: 'something secret here', resave: true, saveUninitialized: true, cookie:{maxAge: 7200000}}))
